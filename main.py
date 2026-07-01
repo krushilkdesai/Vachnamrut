@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 # pyrefly: ignore [missing-import]
 from langchain_community.embeddings import HuggingFaceEmbeddings
 # pyrefly: ignore [missing-import]
+from langchain_mistralai import MistralAIEmbeddings
+# pyrefly: ignore [missing-import]
 from langchain_community.vectorstores import Chroma
 # pyrefly: ignore [missing-import]
 from langchain_mistralai import ChatMistralAI
@@ -10,12 +12,16 @@ from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+# embedding_model = HuggingFaceEmbeddings(
+#     model_name="sentence-transformers/all-MiniLM-L6-v2"
+# )
+
+embedding_model = MistralAIEmbeddings(
+    model="mistral-embed"
 )
 
 vectorstore = Chroma(
-    persist_directory= "chroma_db",
+    persist_directory= "chroma_dbbb",
     embedding_function=embedding_model
 )
 

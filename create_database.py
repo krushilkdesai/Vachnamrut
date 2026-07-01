@@ -9,6 +9,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # pyrefly: ignore [missing-import]
 from langchain_community.embeddings import HuggingFaceEmbeddings
 # pyrefly: ignore [missing-import]
+from langchain_mistralai import MistralAIEmbeddings
+# pyrefly: ignore [missing-import]
 from langchain_community.vectorstores import Chroma 
 from dotenv import load_dotenv
 
@@ -25,12 +27,16 @@ splitter = RecursiveCharacterTextSplitter(
 
 chunks = splitter.split_documents(docs)
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+# embedding_model = HuggingFaceEmbeddings(
+#     model_name="sentence-transformers/all-MiniLM-L6-v2"
+# )
+
+embedding_model = MistralAIEmbeddings(
+    model="mistral-embed"
 )
 
 vectorstore = Chroma.from_documents(
     documents= chunks,
     embedding=embedding_model,
-    persist_directory="chroma_db"
+    persist_directory="chroma_dbbb"
 )

@@ -3,9 +3,8 @@ from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 
 # Import langchain components as specified
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain_mistralai import ChatMistralAI
+from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 
 # Load environment variables using python-dotenv
@@ -15,14 +14,14 @@ app = Flask(__name__)
 
 # Initialize components globally to avoid reloading them on each request
 try:
-    # Create embeddings
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    # Create embeddings using MistralAI
+    embedding_model = MistralAIEmbeddings(
+        model="mistral-embed"
     )
     
-    # Load the Chroma database using those embeddings
+    # Load the Chroma database using those embeddings from chroma_dbbb directory
     vectorstore = Chroma(
-        persist_directory="chroma_db",
+        persist_directory="chroma_dbbb",
         embedding_function=embedding_model
     )
     
