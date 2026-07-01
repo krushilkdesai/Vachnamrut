@@ -37,7 +37,7 @@ Create or check your `.env` file in the root directory (based on `.env.example`)
 ```bash
 MISTRAL_API_KEY=your_mistral_api_key
 FLASK_ENV=development
-PORT=5000
+PORT=5001
 ```
 
 ### 3. Install Dependencies
@@ -56,7 +56,7 @@ Run the Flask server:
 ```bash
 python app.py
 ```
-Open your browser and visit [http://localhost:5000](http://localhost:5000).
+Open your browser and visit [http://localhost:5001](http://localhost:5001).
 
 ---
 
