@@ -12,23 +12,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear history to initial state (keep only welcome message)
     const welcomeMsgHTML = chatHistory.innerHTML;
 
-    // Toggle sidebar on mobile
-    if (toggleSidebarBtn && sidebar) {
-        toggleSidebarBtn.addEventListener("click", () => {
-            sidebar.classList.add("active");
-        });
+    // Toggle sidebar on mobile with backdrop overlay
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+    function openSidebar() {
+        if (sidebar) sidebar.classList.add("active");
+        if (sidebarOverlay) sidebarOverlay.classList.add("active");
     }
 
-    if (closeSidebarBtn && sidebar) {
-        closeSidebarBtn.addEventListener("click", () => {
-            sidebar.classList.remove("active");
-        });
+    function closeSidebar() {
+        if (sidebar) sidebar.classList.remove("active");
+        if (sidebarOverlay) sidebarOverlay.classList.remove("active");
+    }
+
+    if (toggleSidebarBtn) {
+        toggleSidebarBtn.addEventListener("click", openSidebar);
+    }
+
+    if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener("click", closeSidebar);
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", closeSidebar);
     }
 
     // Close sidebar on window resize if moving to desktop width
     window.addEventListener("resize", () => {
-        if (window.innerWidth > 768 && sidebar) {
-            sidebar.classList.remove("active");
+        if (window.innerWidth > 768) {
+            closeSidebar();
         }
     });
 
@@ -37,25 +49,34 @@ document.addEventListener("DOMContentLoaded", () => {
         clearChatBtn.addEventListener("click", () => {
             if (confirm("Are you sure you want to clear the conversation?")) {
                 chatHistory.innerHTML = welcomeMsgHTML;
+                // Re-bind suggestion chips because we reset innerHTML
+                bindSuggestionChips();
             }
         });
     }
 
     // Chip suggestions helper
-    suggestionChips.forEach(chip => {
-        chip.addEventListener("click", () => {
-            const question = chip.getAttribute("data-question");
-            if (question) {
-                chatInput.value = question;
-                chatForm.dispatchEvent(new Event("submit"));
-                
-                // On mobile, close sidebar automatically after clicking a chip
-                if (window.innerWidth <= 768 && sidebar) {
-                    sidebar.classList.remove("active");
-                }
-            }
+    function bindSuggestionChips() {
+        const activeChips = document.querySelectorAll(".suggestion-chip");
+        activeChips.forEach(chip => {
+            // Remove existing listener to prevent double binding
+            chip.replaceWith(chip.cloneNode(true));
         });
-    });
+        
+        // Re-query and bind fresh listeners
+        document.querySelectorAll(".suggestion-chip").forEach(chip => {
+            chip.addEventListener("click", () => {
+                const question = chip.getAttribute("data-question");
+                if (question) {
+                    chatInput.value = question;
+                    chatForm.dispatchEvent(new Event("submit"));
+                    closeSidebar();
+                }
+            });
+        });
+    }
+
+    bindSuggestionChips();
 
     // Handle form submit
     chatForm.addEventListener("submit", async (e) => {
